@@ -38,30 +38,14 @@ st.markdown("""
         .main-header {
             font-size: 2.2rem;
             font-weight: 700;
-            color: var(--text-color, #0F172A);
+            color: #FFFFFF !important;
             margin-bottom: 0.2rem;
         }
         .sub-header {
             font-size: 1.05rem;
-            color: var(--text-color, #475569);
-            opacity: 0.82;
+            font-weight: 400;
+            color: #B0B0B0 !important;
             margin-bottom: 1.5rem;
-        }
-        [data-theme="dark"] .main-header,
-        [data-base-mode="dark"] .main-header {
-            color: #F8FAFC !important;
-        }
-        [data-theme="dark"] .sub-header,
-        [data-base-mode="dark"] .sub-header {
-            color: #CBD5E1 !important;
-        }
-        @media (prefers-color-scheme: dark) {
-            .main-header {
-                color: #F8FAFC;
-            }
-            .sub-header {
-                color: #CBD5E1;
-            }
         }
         .metric-card {
             background-color: var(--secondary-background-color, #F8FAFC);
@@ -210,8 +194,8 @@ def clean_input_text(text_val: str) -> str:
 # Main Application Structure
 # -----------------------------------------------------------------------------
 def main():
-    st.markdown('<div class="main-header">🛠️ NLP Maintenance Log Classifier & Analytics</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Automated failure categorization, SQL database analytics, and real-time technician log triage.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header" style="color: #FFFFFF !important; font-weight: 700; font-size: 2.2rem; margin-bottom: 0.2rem;">🛠️ NLP Maintenance Log Classifier & Analytics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header" style="color: #B0B0B0 !important; font-size: 1.05rem; margin-bottom: 1.5rem;">Automated failure categorization, SQL database analytics, and real-time technician log triage.</div>', unsafe_allow_html=True)
 
     tab1, tab2 = st.tabs(["📊 Analytics Dashboard", "⚡ Live Classifier Demo"])
 
