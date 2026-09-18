@@ -32,23 +32,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for polished aesthetics
+# Custom CSS for polished aesthetics and seamless dark/light mode contrast
 st.markdown("""
     <style>
         .main-header {
             font-size: 2.2rem;
             font-weight: 700;
-            color: #1E293B;
+            color: var(--text-color, #0F172A);
             margin-bottom: 0.2rem;
         }
         .sub-header {
             font-size: 1.05rem;
-            color: #64748B;
+            color: var(--text-color, #475569);
+            opacity: 0.82;
             margin-bottom: 1.5rem;
         }
+        [data-theme="dark"] .main-header,
+        [data-base-mode="dark"] .main-header {
+            color: #F8FAFC !important;
+        }
+        [data-theme="dark"] .sub-header,
+        [data-base-mode="dark"] .sub-header {
+            color: #CBD5E1 !important;
+        }
+        @media (prefers-color-scheme: dark) {
+            .main-header {
+                color: #F8FAFC;
+            }
+            .sub-header {
+                color: #CBD5E1;
+            }
+        }
         .metric-card {
-            background-color: #F8FAFC;
-            border: 1px solid #E2E8F0;
+            background-color: var(--secondary-background-color, #F8FAFC);
+            border: 1px solid rgba(128, 128, 128, 0.2);
             border-radius: 10px;
             padding: 1rem;
             text-align: center;
@@ -56,27 +73,40 @@ st.markdown("""
         .metric-value {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #0F172A;
+            color: var(--text-color, #0F172A);
+        }
+        .metric-value-category {
+            color: #2563EB;
+        }
+        [data-theme="dark"] .metric-value-category {
+            color: #60A5FA !important;
+        }
+        .metric-value-confidence {
+            color: #059669;
+        }
+        [data-theme="dark"] .metric-value-confidence {
+            color: #34D399 !important;
         }
         .metric-label {
             font-size: 0.85rem;
-            color: #64748B;
+            color: var(--text-color, #64748B);
+            opacity: 0.75;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .flag-badge-danger {
-            background-color: #FEE2E2;
-            color: #991B1B;
-            border: 1px solid #FCA5A5;
+            background-color: rgba(239, 68, 68, 0.18);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.35);
             padding: 0.4rem 0.8rem;
             border-radius: 6px;
             font-weight: 600;
             display: inline-block;
         }
         .flag-badge-success {
-            background-color: #DCFCE7;
-            color: #166534;
-            border: 1px solid #86EFAC;
+            background-color: rgba(16, 185, 129, 0.18);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.35);
             padding: 0.4rem 0.8rem;
             border-radius: 6px;
             font-weight: 600;
@@ -415,14 +445,14 @@ def main():
                     st.markdown(f"""
                         <div class="metric-card">
                             <div class="metric-label">Predicted Category</div>
-                            <div class="metric-value" style="color: #1E40AF;">{predicted_cat.replace('_', ' ').title()}</div>
+                            <div class="metric-value metric-value-category">{predicted_cat.replace('_', ' ').title()}</div>
                         </div>
                     """, unsafe_allow_html=True)
                 with res_col2:
                     st.markdown(f"""
                         <div class="metric-card">
                             <div class="metric-label">Model Confidence</div>
-                            <div class="metric-value" style="color: #047857;">{confidence_pct:.2f}%</div>
+                            <div class="metric-value metric-value-confidence">{confidence_pct:.2f}%</div>
                         </div>
                     """, unsafe_allow_html=True)
                 with res_col3:
