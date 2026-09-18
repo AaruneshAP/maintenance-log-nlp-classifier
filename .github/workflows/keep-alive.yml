@@ -1,0 +1,30 @@
+name: Keep Streamlit Dashboard Awake
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # Run once daily at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keep-alive-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Update keep-alive timestamp
+        run: |
+          mkdir -p .github/keepalive
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .github/keepalive/last-ping.txt
+
+      - name: Commit and push timestamp update
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '.github/keepalive/last-ping.txt'
+          message: 'chore: keep-alive timestamp update'
+          default_author: github_actions

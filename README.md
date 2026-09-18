@@ -11,6 +11,7 @@ An end-to-end NLP and analytical data engineering system that ingests free-text 
 * 🗄️ **Analytical SQL Queries Artifact**: [`queries.sql`](queries.sql) | [`results/sql_analytics_sample.md`](results/sql_analytics_sample.md)
 * 📊 **Model Selection Writeup**: [`results/model_choice_rationale.md`](results/model_choice_rationale.md)
 * ⚙️ **Scheduled Ingestion Workflow**: [`.github/workflows/scheduled_ingestion.yml`](.github/workflows/scheduled_ingestion.yml)
+* 🔄 **Scheduled Keep-Alive Workflow**: [`.github/workflows/keep-alive.yml`](.github/workflows/keep-alive.yml)
 
 ---
 
@@ -83,7 +84,7 @@ This project solves these challenges by implementing an automated NLP pipeline t
 | **Dashboard** | Streamlit, Plotly Express | Interactive operational dashboard & real-time ticket classification demo |
 | **REST API** | FastAPI, Uvicorn, Pydantic | Production-grade REST API endpoint for real-time model inference & DB logging |
 | **Containerization**| Docker, Linux Debian slim base image | CPU-optimized container deployment for FastAPI serving layer |
-| **Automation** | GitHub Actions, GitHub REST API, Python | 6-hour cron ingestion workflow & low-confidence triage issue alerting |
+| **Automation** | GitHub Actions, GitHub REST API, Python | 6-hour cron ingestion workflow, daily keep-alive scheduled commit & low-confidence triage issue alerting |
 
 ---
 
@@ -224,3 +225,12 @@ docker build -t nlp-maintenance-api .
 # Run container exposing port 8000
 docker run -p 8000:8000 --env-file .env nlp-maintenance-api
 ```
+
+### 5. Streamlit Community Cloud Deployment & Keep-Alive Automation
+
+* **Live Dashboard URL**: [https://project3cat-8dltbsn4gedctyhueqqmf9.streamlit.app/](https://project3cat-8dltbsn4gedctyhueqqmf9.streamlit.app/)
+
+#### 💡 Streamlit Cloud Sleep Detection & Keep-Alive Strategy
+Streamlit Community Cloud automatically hibernates inactive applications to conserve free-tier computing capacity. Plain HTTP pings (such as periodic `curl` health check requests) do **not** reset Streamlit Cloud's sleep timer — its hibernation detector requires an **actual active WebSocket session or a repository git commit**, meaning stateless HTTP requests return `200 OK` while the app still goes to sleep.
+
+For this reason, the automated keep-alive mechanism ([`.github/workflows/keep-alive.yml`](.github/workflows/keep-alive.yml)) is implemented as a **daily scheduled commit** (`06:00 UTC`) rather than an HTTP ping script. The workflow updates the timestamp file [`.github/keepalive/last-ping.txt`](.github/keepalive/last-ping.txt) and pushes a commit via `EndBug/add-and-commit` using GitHub Actions' built-in `GITHUB_TOKEN`. Streamlit Cloud detects this repository commit and resets its inactivity timer, keeping the dashboard continuously awake and instantly accessible for recruiters and interviewers.
