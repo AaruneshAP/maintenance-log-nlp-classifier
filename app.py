@@ -117,6 +117,8 @@ def get_db_url() -> str:
         url = url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
     elif url and url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    elif url and url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
     return url
 
 @st.cache_resource
