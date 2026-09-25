@@ -167,7 +167,14 @@ def insert_tickets_to_db(df: pd.DataFrame) -> List[int]:
         return []
 
     print("Connecting to PostgreSQL database...")
-    engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
+    # Normalize DATABASE_URL scheme to ensure psycopg2 compatibility
+    db_url = DATABASE_URL
+    if db_url.startswith("postgresql+psycopg://"):
+        db_url = db_url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+    elif db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
+
+    engine = create_engine(db_url, pool_pre_ping=True, pool_recycle=300)
     
     inserted_ids = []
     insert_sql = text("""

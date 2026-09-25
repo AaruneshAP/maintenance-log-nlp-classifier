@@ -31,13 +31,20 @@ MODELS_DIR = Path("models")
 
 def get_db_url() -> Optional[str]:
     """Retrieve DATABASE_URL trying st.secrets first, then os.getenv/.env."""
+    url = None
     try:
         import streamlit as st
         if hasattr(st, "secrets") and "DATABASE_URL" in st.secrets:
-            return st.secrets["DATABASE_URL"]
+            url = st.secrets["DATABASE_URL"]
     except Exception:
         pass
-    return os.getenv("DATABASE_URL")
+    if not url:
+        url = os.getenv("DATABASE_URL")
+    if url and url.startswith("postgresql+psycopg://"):
+        url = url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+    elif url and url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    return url
 
 # Global ML artifact references
 model = None

@@ -104,13 +104,20 @@ st.markdown("""
 # -----------------------------------------------------------------------------
 def get_db_url() -> str:
     """Retrieve DATABASE_URL trying st.secrets first (Streamlit Cloud), falling back to os.getenv/.env."""
+    url = None
     try:
         if "DATABASE_URL" in st.secrets:
-            return st.secrets["DATABASE_URL"]
+            url = st.secrets["DATABASE_URL"]
     except Exception:
         pass
-    load_dotenv()
-    return os.getenv("DATABASE_URL")
+    if not url:
+        load_dotenv()
+        url = os.getenv("DATABASE_URL")
+    if url and url.startswith("postgresql+psycopg://"):
+        url = url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+    elif url and url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    return url
 
 @st.cache_resource
 def get_db_engine():
